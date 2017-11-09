@@ -38,7 +38,6 @@ router.get("/tasks", (req, res, next) => {
 });
 
 router.post("/task", (req, res, next) => {
-  console.log(req.body);
   // Récupération des données depuis la requête
   let task = req.body;
 
@@ -62,6 +61,7 @@ router.post("/task", (req, res, next) => {
           if (err) {
             res.send(err);
           } else {
+            res.status(201);
             res.send(task);
             // Fermer la connexion à la base MongoDb
             db.close();

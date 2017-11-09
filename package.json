@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "babel-watch": "babel src -d client --watch"
   },
   "author": "Mathieu Rodrigues",
   "license": "MIT",
@@ -15,5 +16,9 @@
     "mongodb": "^2.2.33",
     "nodemon": "^1.12.1",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1"
   }
 }
