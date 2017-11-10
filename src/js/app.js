@@ -25,8 +25,8 @@ const componentTask = elem => {
 
   taskContainer.id = `task-${elem._id}`;
   taskContainer.classList = `taskListItem list-group-item taskItemIsDone${elem.isDone}`;
-  taskContainer.dataset("id") = elem._id;
-  taskContainer.dataset("taskIsDone") = elem.isDone;
+  taskContainer.dataset.id = elem._id;
+  taskContainer.dataset.taskIsDone = elem.isDone;
 
   taskContainer.appendChild(taskTitleContainer);
   taskTitleContainer.appendChild(taskTitle);
@@ -58,6 +58,9 @@ taskAddForm.addEventListener("submit", evt => {
       .then(newTask => newTask.json())
       .then(newTask => {
         componentTask(newTask);
+      })
+      .catch(err => {
+        throw err;
       });
   } else {
     document.querySelector(".alert-danger").classList.remove("d-none");
@@ -68,18 +71,26 @@ const handleClickTask = taskId => {
   document.getElementById(`task-${taskId}`).addEventListener("click", e => {
     e.stopPropagation(); // Ne fonctionne pas => à check
     const currentTask = document.getElementById(`task-${taskId}`);
-    let taskIsDone = currentTask.dataset.taskIsDone;
-    //currentTask.classList.toggle("taskItemIsDonetrue");
-    //currentTask.classList.toggle("taskItemIsDonefalse");
-    console.log(taskIsDone);
-    if (taskIsDone) {
-      console.log("trueee");
+    const taskIsDone = currentTask.dataset.taskIsDone;
+
+    if (taskIsDone === "true") {
       currentTask.dataset.taskIsDone = false;
-      //currentTask.setAttribute("data-task-is-done", false);
     } else {
-      console.log("faaalse");
       currentTask.dataset.taskIsDone = true;
-      //currentTask.setAttribute("data-task-is-done", true);
     }
+
+    fetch(`/api/task/${taskId}`, {
+      method: "put",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title: currentTask.childNodes[0].innerHTML,
+        isDone: currentTask.dataset.taskIsDone
+      })
+    }).catch(err => {
+      throw err;
+    });
   });
 };

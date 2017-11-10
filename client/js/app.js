@@ -24,8 +24,8 @@ var componentTask = function componentTask(elem) {
 
   taskContainer.id = "task-" + elem._id;
   taskContainer.classList = "taskListItem list-group-item taskItemIsDone" + elem.isDone;
-  taskContainer.setAttribute("data-id", elem._id);
-  taskContainer.setAttribute("data-task-is-done", elem.isDone);
+  taskContainer.dataset.id = elem._id;
+  taskContainer.dataset.taskIsDone = elem.isDone;
 
   taskContainer.appendChild(taskTitleContainer);
   taskTitleContainer.appendChild(taskTitle);
@@ -57,6 +57,8 @@ taskAddForm.addEventListener("submit", function (evt) {
       return newTask.json();
     }).then(function (newTask) {
       componentTask(newTask);
+    }).catch(function (err) {
+      throw err;
     });
   } else {
     document.querySelector(".alert-danger").classList.remove("d-none");
@@ -68,17 +70,25 @@ var handleClickTask = function handleClickTask(taskId) {
     e.stopPropagation(); // Ne fonctionne pas => à check
     var currentTask = document.getElementById("task-" + taskId);
     var taskIsDone = currentTask.dataset.taskIsDone;
-    //currentTask.classList.toggle("taskItemIsDonetrue");
-    //currentTask.classList.toggle("taskItemIsDonefalse");
-    console.log(taskIsDone);
-    if (taskIsDone) {
-      console.log("trueee");
+
+    if (taskIsDone === "true") {
       currentTask.dataset.taskIsDone = false;
-      //currentTask.setAttribute("data-task-is-done", false);
     } else {
-      console.log("faaalse");
       currentTask.dataset.taskIsDone = true;
-      //currentTask.setAttribute("data-task-is-done", true);
     }
+
+    fetch("/api/task/" + taskId, {
+      method: "put",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title: currentTask.childNodes[0].innerHTML,
+        isDone: currentTask.dataset.taskIsDone
+      })
+    }).catch(function (err) {
+      throw err;
+    });
   });
 };
