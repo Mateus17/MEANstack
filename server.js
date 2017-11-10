@@ -15,8 +15,10 @@ let port = 8080;
 // Initier le serveur
 let app = express();
 
-// Définir le dossier static de la partie frontend
-app.use(express.static(path.join(__dirname, "clientPureJS")));
+// Définir le dossier statique de la partie frontend
+// app.use(express.static(path.join(__dirname, "clientPureJS")));
+app.set("views", path.join(__dirname, "www"));
+app.use(express.static(path.join(__dirname, "www")));
 
 // Configurer body-parser
 app.use(bodyParser.json());
