@@ -8,9 +8,10 @@ import { HeaderComponent } from "./partials/header/header.component";
 
 // Importer le module Routing
 import { Routing } from "./app.routing";
+import { AddTaskComponent } from './partials/add-task/add-task.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, FooterComponent, HeaderComponent],
+  declarations: [AppComponent, HomeComponent, FooterComponent, HeaderComponent, AddTaskComponent],
   imports: [BrowserModule, Routing],
   providers: [],
   bootstrap: [AppComponent]

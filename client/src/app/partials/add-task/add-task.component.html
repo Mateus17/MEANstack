@@ -1,0 +1,7 @@
+<section>
+  <h2 [ngClass]="{'errorAddTask': errorAddTask == true}">Champ obligatoire</h2>
+  <form action="#" (submit)="addNewTask(newTask)">
+    <input type="text" name="newtask" [(ngModel)]="newTask" (focus)="errorAddTask = false">
+    <button type="submit">+</button>
+  </form>
+</section>
