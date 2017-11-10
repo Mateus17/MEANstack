@@ -7,13 +7,13 @@ import { Component, Output, EventEmitter } from "@angular/core";
 export class AddTaskComponent {
   // Définition des variables
   public newTask: string;
-  private errorAddTask: boolean = false;
+  public errorAddTask: boolean = false;
 
   // Création es événements pour envoyer des données vers le composant home.component
   @Output() sendNewTaskData = new EventEmitter();
 
   // Création d'une fonction pour ajouter une tâche
-  private addNewTask = (event: any) => {
+  public addNewTask = (event: any) => {
     if (this.newTask == undefined) {
       // Afficher le message d'erreur
       this.errorAddTask = true;

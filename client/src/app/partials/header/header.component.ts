@@ -7,6 +7,6 @@ import { Component } from "@angular/core";
 })
 export class HeaderComponent {
   // Définition des variables
-  private appTitle = "Titre de l'application";
-  private appSubTitle = "Sous-titre de l'application";
+  public appTitle = "Titre de l'application";
+  public appSubTitle = "Sous-titre de l'application";
 }

@@ -6,5 +6,5 @@ import { Component } from "@angular/core";
 })
 export class FooterComponent {
   // Définition des variables
-  private footer = "Under MIT license";
+  public footer = "Under MIT license";
 }
