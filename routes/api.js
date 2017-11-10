@@ -122,5 +122,30 @@ router.put("/task/:id", (req, res, next) => {
   }
 });
 
+router.delete("/task/:id", (req, res, next) => {
+  // Ouvrir une connexion sur la base MongoDb => connect
+  MongoClient.connect(mongodbUrl, (err, db) => {
+    // Tester la connexion
+    if (err) {
+      res.send(err);
+      db.close();
+    } else {
+      // Supprimer un document  dans la collection 'list' => remove
+      db
+        .collection("list")
+        .remove({ _id: new ObjectId(req.params.id) }, (err, data) => {
+          // Vérification de la commande MongoDb
+          if (err) {
+            res.send(err);
+          } else {
+            res.send(data);
+            // Fermer la connexion à la base MongoDb
+            db.close();
+          }
+        });
+    }
+  });
+});
+
 // Export du module
 module.exports = router;

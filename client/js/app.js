@@ -21,17 +21,32 @@ var componentTask = function componentTask(elem) {
   var taskContainer = document.createElement("article");
   var taskTitleContainer = document.createElement("h2");
   var taskTitle = document.createTextNode(elem.title);
+  var tasksActionContainer = document.createElement("div");
+  var taskValidateContainer = document.createElement("i");
+  var taskRemoveContainer = document.createElement("i");
 
+  taskValidateContainer.classList = "changeDoneStatus fontSize20";
+  taskRemoveContainer.classList = "removeTask fontSize20 ml-2";
   taskContainer.id = "task-" + elem._id;
-  taskContainer.classList = "taskListItem list-group-item taskItemIsDone" + elem.isDone;
+  taskContainer.classList = "taskListItem list-group-item taskItemIsDone" + elem.isDone + " d-flex justify-content-between";
   taskContainer.dataset.id = elem._id;
   taskContainer.dataset.taskIsDone = elem.isDone;
 
   taskContainer.appendChild(taskTitleContainer);
   taskTitleContainer.appendChild(taskTitle);
   tasksList.appendChild(taskContainer);
+  if (elem.isDone === "true") {
+    taskValidateContainer.innerHTML = "&#9100;";
+  } else {
+    taskValidateContainer.innerHTML = "&#10003;";
+  }
+  taskRemoveContainer.innerHTML = "&times;";
+  tasksActionContainer.appendChild(taskValidateContainer);
+  tasksActionContainer.appendChild(taskRemoveContainer);
+  taskContainer.appendChild(tasksActionContainer);
 
-  handleClickTask(elem._id);
+  handleClickUpdateTask(elem._id, taskValidateContainer);
+  handleClickRemoveTask(elem._id);
 };
 
 var taskAddForm = document.getElementById("addTaskForm");
@@ -65,15 +80,16 @@ taskAddForm.addEventListener("submit", function (evt) {
   }
 });
 
-var handleClickTask = function handleClickTask(taskId) {
-  document.getElementById("task-" + taskId).addEventListener("click", function (e) {
-    e.stopPropagation(); // Ne fonctionne pas => à check
+var handleClickUpdateTask = function handleClickUpdateTask(taskId, taskIconStatus) {
+  document.querySelector("#task-" + taskId + " .changeDoneStatus").addEventListener("click", function (e) {
     var currentTask = document.getElementById("task-" + taskId);
     var taskIsDone = currentTask.dataset.taskIsDone;
 
     if (taskIsDone === "true") {
+      taskIconStatus.innerHTML = "&#10003;";
       currentTask.dataset.taskIsDone = false;
     } else {
+      taskIconStatus.innerHTML = "&#9100;";
       currentTask.dataset.taskIsDone = true;
     }
 
@@ -87,6 +103,20 @@ var handleClickTask = function handleClickTask(taskId) {
         title: currentTask.childNodes[0].innerHTML,
         isDone: currentTask.dataset.taskIsDone
       })
+    }).catch(function (err) {
+      throw err;
+    });
+  });
+};
+
+var handleClickRemoveTask = function handleClickRemoveTask(taskId) {
+  document.querySelector("#task-" + taskId + " .removeTask").addEventListener("click", function (e) {
+    var currentTask = document.getElementById("task-" + taskId);
+
+    fetch("/api/task/" + taskId, {
+      method: "delete"
+    }).then(function (res) {
+      currentTask.remove();
     }).catch(function (err) {
       throw err;
     });

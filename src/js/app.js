@@ -22,17 +22,32 @@ const componentTask = elem => {
   const taskContainer = document.createElement("article");
   const taskTitleContainer = document.createElement("h2");
   const taskTitle = document.createTextNode(elem.title);
+  const tasksActionContainer = document.createElement("div");
+  const taskValidateContainer = document.createElement("i");
+  const taskRemoveContainer = document.createElement("i");
 
+  taskValidateContainer.classList = `changeDoneStatus fontSize20`;
+  taskRemoveContainer.classList = `removeTask fontSize20 ml-2`;
   taskContainer.id = `task-${elem._id}`;
-  taskContainer.classList = `taskListItem list-group-item taskItemIsDone${elem.isDone}`;
+  taskContainer.classList = `taskListItem list-group-item taskItemIsDone${elem.isDone} d-flex justify-content-between`;
   taskContainer.dataset.id = elem._id;
   taskContainer.dataset.taskIsDone = elem.isDone;
 
   taskContainer.appendChild(taskTitleContainer);
   taskTitleContainer.appendChild(taskTitle);
   tasksList.appendChild(taskContainer);
+  if (elem.isDone === "true") {
+    taskValidateContainer.innerHTML = "&#9100;";
+  } else {
+    taskValidateContainer.innerHTML = "&#10003;";
+  }
+  taskRemoveContainer.innerHTML = "&times;";
+  tasksActionContainer.appendChild(taskValidateContainer);
+  tasksActionContainer.appendChild(taskRemoveContainer);
+  taskContainer.appendChild(tasksActionContainer);
 
-  handleClickTask(elem._id);
+  handleClickUpdateTask(elem._id, taskValidateContainer);
+  handleClickRemoveTask(elem._id);
 };
 
 const taskAddForm = document.getElementById("addTaskForm");
@@ -67,30 +82,51 @@ taskAddForm.addEventListener("submit", evt => {
   }
 });
 
-const handleClickTask = taskId => {
-  document.getElementById(`task-${taskId}`).addEventListener("click", e => {
-    e.stopPropagation(); // Ne fonctionne pas => à check
-    const currentTask = document.getElementById(`task-${taskId}`);
-    const taskIsDone = currentTask.dataset.taskIsDone;
+const handleClickUpdateTask = (taskId, taskIconStatus) => {
+  document
+    .querySelector(`#task-${taskId} .changeDoneStatus`)
+    .addEventListener("click", e => {
+      const currentTask = document.getElementById(`task-${taskId}`);
+      const taskIsDone = currentTask.dataset.taskIsDone;
 
-    if (taskIsDone === "true") {
-      currentTask.dataset.taskIsDone = false;
-    } else {
-      currentTask.dataset.taskIsDone = true;
-    }
+      if (taskIsDone === "true") {
+        taskIconStatus.innerHTML = "&#10003;";
+        currentTask.dataset.taskIsDone = false;
+      } else {
+        taskIconStatus.innerHTML = "&#9100;";
+        currentTask.dataset.taskIsDone = true;
+      }
 
-    fetch(`/api/task/${taskId}`, {
-      method: "put",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        title: currentTask.childNodes[0].innerHTML,
-        isDone: currentTask.dataset.taskIsDone
-      })
-    }).catch(err => {
-      throw err;
+      fetch(`/api/task/${taskId}`, {
+        method: "put",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title: currentTask.childNodes[0].innerHTML,
+          isDone: currentTask.dataset.taskIsDone
+        })
+      }).catch(err => {
+        throw err;
+      });
     });
-  });
+};
+
+const handleClickRemoveTask = taskId => {
+  document
+    .querySelector(`#task-${taskId} .removeTask`)
+    .addEventListener("click", e => {
+      const currentTask = document.getElementById(`task-${taskId}`);
+
+      fetch(`/api/task/${taskId}`, {
+        method: "delete"
+      })
+        .then(res => {
+          currentTask.remove();
+        })
+        .catch(err => {
+          throw err;
+        });
+    });
 };
