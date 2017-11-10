@@ -80,12 +80,13 @@ router.put("/task/:id", (req, res, next) => {
   let updTask = {};
 
   // Assignation des valeurs de la requête dans l'objet
-  if (task.isDone) {
-    updTask.isDone = task.isDone;
-  }
-  if (task.title) {
-    updTask.title = task.title;
-  }
+  // if (task.isDone !== null && task.isDone !== undefined) {
+  updTask.title = task.title;
+  updTask.isDone = task.isDone;
+  // }
+  // if (task.title) {
+  //   updTask.title = task.title;
+  // }
 
   // Vérifier la présence de valeur dans la requête
   if (!updTask) {

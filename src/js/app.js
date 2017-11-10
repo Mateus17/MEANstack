@@ -36,7 +36,7 @@ const componentTask = elem => {
   taskContainer.appendChild(taskTitleContainer);
   taskTitleContainer.appendChild(taskTitle);
   tasksList.appendChild(taskContainer);
-  if (elem.isDone === "true") {
+  if (elem.isDone) {
     taskValidateContainer.innerHTML = "&#9100;";
   } else {
     taskValidateContainer.innerHTML = "&#10003;";
@@ -46,7 +46,7 @@ const componentTask = elem => {
   tasksActionContainer.appendChild(taskRemoveContainer);
   taskContainer.appendChild(tasksActionContainer);
 
-  handleClickUpdateTask(elem._id, taskValidateContainer);
+  handleClickUpdateTask(elem._id, elem.isDone, taskValidateContainer);
   handleClickRemoveTask(elem._id);
 };
 
@@ -73,6 +73,7 @@ taskAddForm.addEventListener("submit", evt => {
       .then(newTask => newTask.json())
       .then(newTask => {
         componentTask(newTask);
+        taskTitleInput.value = "";
       })
       .catch(err => {
         throw err;
@@ -82,20 +83,20 @@ taskAddForm.addEventListener("submit", evt => {
   }
 });
 
-const handleClickUpdateTask = (taskId, taskIconStatus) => {
+const handleClickUpdateTask = (taskId, taskIsDone, taskIconStatus) => {
   document
     .querySelector(`#task-${taskId} .changeDoneStatus`)
     .addEventListener("click", e => {
       const currentTask = document.getElementById(`task-${taskId}`);
-      const taskIsDone = currentTask.dataset.taskIsDone;
 
-      if (taskIsDone === "true") {
+      if (taskIsDone) {
         taskIconStatus.innerHTML = "&#10003;";
-        currentTask.dataset.taskIsDone = false;
       } else {
         taskIconStatus.innerHTML = "&#9100;";
-        currentTask.dataset.taskIsDone = true;
       }
+
+      currentTask.dataset.taskIsDone = !taskIsDone;
+      taskIsDone = !taskIsDone;
 
       fetch(`/api/task/${taskId}`, {
         method: "put",
@@ -105,7 +106,7 @@ const handleClickUpdateTask = (taskId, taskIconStatus) => {
         },
         body: JSON.stringify({
           title: currentTask.childNodes[0].innerHTML,
-          isDone: currentTask.dataset.taskIsDone
+          isDone: taskIsDone
         })
       }).catch(err => {
         throw err;

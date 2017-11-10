@@ -35,7 +35,7 @@ var componentTask = function componentTask(elem) {
   taskContainer.appendChild(taskTitleContainer);
   taskTitleContainer.appendChild(taskTitle);
   tasksList.appendChild(taskContainer);
-  if (elem.isDone === "true") {
+  if (elem.isDone) {
     taskValidateContainer.innerHTML = "&#9100;";
   } else {
     taskValidateContainer.innerHTML = "&#10003;";
@@ -45,7 +45,7 @@ var componentTask = function componentTask(elem) {
   tasksActionContainer.appendChild(taskRemoveContainer);
   taskContainer.appendChild(tasksActionContainer);
 
-  handleClickUpdateTask(elem._id, taskValidateContainer);
+  handleClickUpdateTask(elem._id, elem.isDone, taskValidateContainer);
   handleClickRemoveTask(elem._id);
 };
 
@@ -72,6 +72,7 @@ taskAddForm.addEventListener("submit", function (evt) {
       return newTask.json();
     }).then(function (newTask) {
       componentTask(newTask);
+      taskTitleInput.value = "";
     }).catch(function (err) {
       throw err;
     });
@@ -80,18 +81,18 @@ taskAddForm.addEventListener("submit", function (evt) {
   }
 });
 
-var handleClickUpdateTask = function handleClickUpdateTask(taskId, taskIconStatus) {
+var handleClickUpdateTask = function handleClickUpdateTask(taskId, taskIsDone, taskIconStatus) {
   document.querySelector("#task-" + taskId + " .changeDoneStatus").addEventListener("click", function (e) {
     var currentTask = document.getElementById("task-" + taskId);
-    var taskIsDone = currentTask.dataset.taskIsDone;
 
-    if (taskIsDone === "true") {
+    if (taskIsDone) {
       taskIconStatus.innerHTML = "&#10003;";
-      currentTask.dataset.taskIsDone = false;
     } else {
       taskIconStatus.innerHTML = "&#9100;";
-      currentTask.dataset.taskIsDone = true;
     }
+
+    currentTask.dataset.taskIsDone = !taskIsDone;
+    taskIsDone = !taskIsDone;
 
     fetch("/api/task/" + taskId, {
       method: "put",
@@ -101,7 +102,7 @@ var handleClickUpdateTask = function handleClickUpdateTask(taskId, taskIconStatu
       },
       body: JSON.stringify({
         title: currentTask.childNodes[0].innerHTML,
-        isDone: currentTask.dataset.taskIsDone
+        isDone: taskIsDone
       })
     }).catch(function (err) {
       throw err;
