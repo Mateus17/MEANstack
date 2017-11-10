@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "babel-watch": "babel src -d client --watch"
+    "babel-watch-pure-js": "babel src -d clientPureJS --watch"
   },
   "author": "Mathieu Rodrigues",
   "license": "MIT",

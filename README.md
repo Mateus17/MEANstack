@@ -9,8 +9,8 @@
     * Si aucune collections :
         * `use tasks`
         * `db.list.insert([{title:"Installer MongoDB", isDone: false}, {title: "Configurer MongoDB", isDone: false}, {title:"Utiliser le shell MongoDB", isDone: false})]`
-* Quatrième terminal
-    * `npm run babel-watch`
+* Quatrième terminal (pour la version sans Angular)
+    * `npm run babel-watch-pure-js`
 
 # Commandes utiles pour MongoDB
 * `show dbs`
