@@ -72,5 +72,55 @@ router.post("/task", (req, res, next) => {
   }
 });
 
+router.put("/task/:id", (req, res, next) => {
+  // Récupération des données depuis la requête
+  let task = req.body;
+
+  // Définition d'un objet pour analyser les données de la requête
+  let updTask = {};
+
+  // Assignation des valeurs de la requête dans l'objet
+  if (task.isDone) {
+    updTask.isDone = task.isDone;
+  }
+  if (task.title) {
+    updTask.title = task.title;
+  }
+
+  // Vérifier la présence de valeur dans la requête
+  if (!updTask) {
+    res.status(400);
+    res.json({ error: "Bad data" });
+  } else {
+    // Ouvrir une connexion sur la base MongoDb => connect
+    MongoClient.connect(mongodbUrl, (err, db) => {
+      // Tester la connexion
+      if (err) {
+        res.send(err);
+        db.close();
+      } else {
+        // Mettre à jour un document  dans la collection 'list' => update
+        db
+          .collection("list")
+          .update(
+            { _id: new ObjectId(req.params.id) },
+            updTask,
+            {},
+            (err, data) => {
+              // Vérification de la commande MongoDb
+              if (err) {
+                res.send(err);
+              } else {
+                res.send(data);
+                // Fermer la connexion à la base MongoDb
+                db.close();
+              }
+            }
+          );
+      }
+    });
+  }
+});
+
 // Export du module
 module.exports = router;

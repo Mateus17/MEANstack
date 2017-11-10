@@ -1,8 +1,6 @@
 "use strict";
 
-var tasksUrl = "/api/tasks";
-
-fetch(tasksUrl, {
+fetch("/api/tasks", {
   method: "get"
 }).then(function (response, err) {
   if (response.status === 200) {
@@ -20,10 +18,20 @@ fetch(tasksUrl, {
 
 var componentTask = function componentTask(elem) {
   var tasksList = document.querySelector(".tasksList");
+  var taskContainer = document.createElement("article");
+  var taskTitleContainer = document.createElement("h2");
+  var taskTitle = document.createTextNode(elem.title);
 
-  var task = document.createElement("div").innerHTML = "<article data-id=\"" + elem._id + "\" class=\"taskListItem list-group-item list-group-item-action\" data-task-is-done=" + elem.isDone + ">\n        <h2>" + elem.title + "</h2>\n    </article>";
+  taskContainer.id = "task-" + elem._id;
+  taskContainer.classList = "taskListItem list-group-item taskItemIsDone" + elem.isDone;
+  taskContainer.setAttribute("data-id", elem._id);
+  taskContainer.setAttribute("data-task-is-done", elem.isDone);
 
-  tasksList.innerHTML += task;
+  taskContainer.appendChild(taskTitleContainer);
+  taskTitleContainer.appendChild(taskTitle);
+  tasksList.appendChild(taskContainer);
+
+  handleClickTask(elem._id);
 };
 
 var taskAddForm = document.getElementById("addTaskForm");
@@ -54,3 +62,23 @@ taskAddForm.addEventListener("submit", function (evt) {
     document.querySelector(".alert-danger").classList.remove("d-none");
   }
 });
+
+var handleClickTask = function handleClickTask(taskId) {
+  document.getElementById("task-" + taskId).addEventListener("click", function (e) {
+    e.stopPropagation(); // Ne fonctionne pas => à check
+    var currentTask = document.getElementById("task-" + taskId);
+    var taskIsDone = currentTask.dataset.taskIsDone;
+    //currentTask.classList.toggle("taskItemIsDonetrue");
+    //currentTask.classList.toggle("taskItemIsDonefalse");
+    console.log(taskIsDone);
+    if (taskIsDone) {
+      console.log("trueee");
+      currentTask.dataset.taskIsDone = false;
+      //currentTask.setAttribute("data-task-is-done", false);
+    } else {
+      console.log("faaalse");
+      currentTask.dataset.taskIsDone = true;
+      //currentTask.setAttribute("data-task-is-done", true);
+    }
+  });
+};

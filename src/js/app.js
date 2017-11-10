@@ -1,6 +1,4 @@
-const tasksUrl = "/api/tasks";
-
-fetch(tasksUrl, {
+fetch("/api/tasks", {
   method: "get"
 })
   .then((response, err) => {
@@ -21,14 +19,20 @@ fetch(tasksUrl, {
 
 const componentTask = elem => {
   const tasksList = document.querySelector(".tasksList");
+  const taskContainer = document.createElement("article");
+  const taskTitleContainer = document.createElement("h2");
+  const taskTitle = document.createTextNode(elem.title);
 
-  const task = (document.createElement(
-    "div"
-  ).innerHTML = `<article data-id="${elem._id}" class="taskListItem list-group-item list-group-item-action" data-task-is-done=${elem.isDone}>
-        <h2>${elem.title}</h2>
-    </article>`);
+  taskContainer.id = `task-${elem._id}`;
+  taskContainer.classList = `taskListItem list-group-item taskItemIsDone${elem.isDone}`;
+  taskContainer.dataset("id") = elem._id;
+  taskContainer.dataset("taskIsDone") = elem.isDone;
 
-  tasksList.innerHTML += task;
+  taskContainer.appendChild(taskTitleContainer);
+  taskTitleContainer.appendChild(taskTitle);
+  tasksList.appendChild(taskContainer);
+
+  handleClickTask(elem._id);
 };
 
 const taskAddForm = document.getElementById("addTaskForm");
@@ -59,3 +63,23 @@ taskAddForm.addEventListener("submit", evt => {
     document.querySelector(".alert-danger").classList.remove("d-none");
   }
 });
+
+const handleClickTask = taskId => {
+  document.getElementById(`task-${taskId}`).addEventListener("click", e => {
+    e.stopPropagation(); // Ne fonctionne pas => à check
+    const currentTask = document.getElementById(`task-${taskId}`);
+    let taskIsDone = currentTask.dataset.taskIsDone;
+    //currentTask.classList.toggle("taskItemIsDonetrue");
+    //currentTask.classList.toggle("taskItemIsDonefalse");
+    console.log(taskIsDone);
+    if (taskIsDone) {
+      console.log("trueee");
+      currentTask.dataset.taskIsDone = false;
+      //currentTask.setAttribute("data-task-is-done", false);
+    } else {
+      console.log("faaalse");
+      currentTask.dataset.taskIsDone = true;
+      //currentTask.setAttribute("data-task-is-done", true);
+    }
+  });
+};
