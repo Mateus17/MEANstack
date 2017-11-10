@@ -1,13 +1,18 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
+import { MongodbService } from "../../services/mongodb.service";
 
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
-  styleUrls: ["./home.component.css"],
-  encapsulation: ViewEncapsulation.None
+
+  // Ajout du service dans le tableau des providers
+  providers: [MongodbService]
 })
 export class HomeComponent implements OnInit {
-  constructor() {}
+  constructor(
+    // Ajouter le service dans le constructor
+    private mongoddbService: MongodbService
+  ) {}
 
   ngOnInit() {}
 }
